@@ -31,7 +31,7 @@ server.listen(port, () => {
   console.log(`listening on :${port}`);
 });
 
-const sequelize = new Sequelize('mysql', 'root', '', {
+const sequelize = new Sequelize('database_development', 'root', '', {
   host: 'mysql',
   dialect: 'mysql',
 
@@ -53,7 +53,39 @@ sequelize
   });
 
 
+  async function setUpAndQueryDB() {
+    const User = sequelize.define('User', {
+      firstName: {
+        type: Sequelize.STRING
+      },
+      lastName: {
+        type: Sequelize.STRING
+      },
+      email: {
+        type: Sequelize.STRING
+      },
+      bio: {
+        type: Sequelize.TEXT
+      }
+    });
+    // force: true will drop the table if it already exists
+    await User.sync({force: true}).then(() => {
+      // Table created
+      return User.create({
+        firstName: 'John',
+        lastName: 'Hancock',
+        email: 'jhancock@bizsoft.com',
+        bio: 'While living in boxes around the world...'
+      });
+    });
 
+
+    User.findAll().then(users => {
+      console.log(users)
+    });
+  }
+  // setUpAndQueryDB();
+  
 
 
 
